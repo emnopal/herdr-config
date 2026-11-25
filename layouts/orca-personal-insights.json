@@ -379,5 +379,6 @@
     16
   ],
   "preview": "layouts/orca-personal.png",
-  "terminal_menu": "my-menu"
+  "terminal_menu": "my-menu",
+  "theme": "oled-dark"
 }

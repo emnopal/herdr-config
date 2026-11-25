@@ -134,7 +134,7 @@ export default class Tabs extends View {
       : 10;
     const panel = find(root, "panel"), body = find(root, "panel-body");
     // Restore only panels that this layout provides.
-    const enabled = [...(shared("workspace.panels") ?? ["files", "changes"]), ...(props()?.gitGraph ? ["graph"] : []), ...(props()?.betterPanels ? ["pull-requests", "linear-issues", "git-controls"] : [])].filter(id => body?.children?.some(c => c.id === id));
+    const enabled = ["files", "changes", ...(props()?.gitGraph ? ["graph"] : []), ...(props()?.betterPanels ? ["pull-requests", "linear-issues", "git-controls"] : [])].filter(id => body?.children?.some(c => c.id === id));
     this.syncPanel(space, panel, body, enabled);
     const panelButton = (id, label, icon) => {
       const on = panel && !panel.hidden && body?.active === id;

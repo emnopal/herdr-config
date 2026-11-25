@@ -2,20 +2,18 @@
 
 Orca for Herdr with the original status-bar usage strip, no usage bars in the left sidebar, and no Excalidraw tab-bar button or shortcut. Git Graph toggles Rabeeh’s graph in the right sidebar. Detailed Git Graph opens Werlang’s graph in a full-size tab, reusing the named tab in the current space. Both plugins include Git write actions; use their confirmations carefully. Werlang’s optional cleanup action launches OpenCode. Other Orca features stay in place. The shared tab bar keeps Excalidraw visible in layouts that do not set this option.
 
-`layouts/orca-personal.json` is the layout; `mods/` holds its dependency snapshot, including the custom `personal-usage` mod and a `hideExcalidraw` option in `my-tabs`. `keys.json` contains only this layout’s shortcuts. No credentials, session logs, or application state are included.
+The active layout is `layouts/orca-personal-insights.json`; `orca-personal.json` is also available. `mods/` holds the bundled plugins, `themes/oled-dark.json` provides the OLED-dark palette, and `keys.json` contains layout-specific shortcuts. No credentials, session logs, or application state are included.
 
-The usage mod reads Claude Code’s existing macOS Keychain login and Anthropic’s usage endpoint, and reads Codex’s local session logs. It never stores credentials or starts paid model runs. Refreshes run every three minutes, with failure backoff up to fifteen minutes; clicks respect that cooldown. Old values remain visible on failure alongside the error.
-
-Installed and selected on this machine as `orca-personal`. Existing layouts remain available with Cmd+Shift+L. Config files here are the editable source; copy changed files to `~/.config/herdr-app/` to apply them.
+The OLED palette uses black terminals and canvas, near-black chrome, readable gray text, and blue accents. Files and Changes buttons follow the layout’s panel slots, regardless of another machine’s welcome-screen panel preferences.
 
 ## Install on another machine
 
 Requires Herdr, macOS, Git, Node, and authenticated `gh` for GitHub panels. Optional Orca integrations require their respective CLIs. Back up any existing folders with matching names before copying.
 
-1. Copy `mods/` and `layouts/` into `~/.config/herdr-app/`, preserving their structure. These folders include third-party dependencies; review existing copies before replacing them.
-2. Merge the `layout:orca-personal` section from `keys.json` into your app’s `keys.json`, preserving other bindings.
+1. Copy `mods/`, `layouts/`, and `themes/` into `~/.config/herdr-app/`, preserving their structure. These folders include third-party dependencies; review existing copies before replacing them.
+2. Merge the `layout:orca-personal` and `layout:orca-personal-insights` sections from `keys.json` into your app’s `keys.json`, preserving other bindings.
 3. Run `rtk proxy herdr-app check ~/.config/herdr-app/mods/<name>` for each copied mod.
-4. Run `rtk proxy herdr-app do layout.switch '{"name":"orca-personal"}'`.
+4. Run `rtk proxy herdr-app do layout.switch '{"name":"orca-personal-insights"}'`.
 
 ## Verify
 

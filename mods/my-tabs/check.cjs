@@ -31,7 +31,7 @@ const env = {
   props: () => ({ hideExcalidraw, gitGraph, betterPanels }),
   View: class {}, div: element, v_flex: element, h_flex: element, svg: element, image: element,
   theme: () => new Proxy({}, { get: () => "#000" }), settings: () => ({ zoom: 1 }), window: () => ({ platform: "macos" }),
-  layout: () => ({ id: "root", children: [sidebar, { id: "panel", hidden: true, children: [{ id: "panel-body", children: [{ id: "graph" }, { id: "pull-requests" }, { id: "linear-issues" }, { id: "git-controls" }] }] }] }), shared: (k) => state[k],
+  layout: () => ({ id: "root", children: [sidebar, { id: "panel", hidden: true, children: [{ id: "panel-body", children: [{ id: "files" }, { id: "changes" }, { id: "graph" }, { id: "pull-requests" }, { id: "linear-issues" }, { id: "git-controls" }] }] }] }), shared: (k) => state[k],
   run: (name, args) => calls.push([name, JSON.parse(JSON.stringify(args))]), spaces: () => [], panes: () => [], focused: () => null,
   openOverlay() {}, exec() {}, nextCommand: () => new Promise(() => {}),
   localStorage: { getItem: () => null, setItem() {} },
@@ -98,4 +98,10 @@ find(navigation.render(), "nav-git-graph").handlers.on_click();
 assert.equal(calls[0][0], "tab.new");
 assert.equal(calls[0][1].mod, "git-graph");
 assert.equal(calls[0][1].name, "Detailed Git Graph");
+state["workspace.panels"] = [];
+assert.ok(find(tabs.render(), "panel-files"));
+assert.ok(find(tabs.render(), "panel-changes"));
+state["workspace.panels"] = ["graph"];
+assert.ok(find(tabs.render(), "panel-files"));
+assert.ok(find(tabs.render(), "panel-changes"));
 console.log("my-tabs and sidebar navigation: ok");
