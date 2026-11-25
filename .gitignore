@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+.cache/
+*.error
+*.log
+*.before-*
+mods/insights/runtime.json
+/data/

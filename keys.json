@@ -1,0 +1,28 @@
+{
+  "layout:orca-personal": {
+    "cmd-n": "mod.open:new-worktree",
+    "cmd-g": "mod.open:open-vscode",
+    "cmd-shift-n": "mod.open:new-project",
+    "cmd-shift-a": "layout.toggle:agents",
+    "cmd-shift-b": "orca-sidebar.toggle-panel",
+    "cmd-alt-]": "orca-sidebar.next-space",
+    "cmd-alt-[": "orca-sidebar.prev-space",
+    "cmd-]": "orca-sidebar.next-agent",
+    "cmd-[": "orca-sidebar.prev-agent",
+    "cmd-w": "my-tabs.close-tab",
+    "cmd-shift-w": "my-tabs.close-pane"
+  },
+  "layout:orca-personal-insights": {
+    "cmd-n": "mod.open:new-worktree",
+    "cmd-g": "mod.open:open-vscode",
+    "cmd-shift-n": "mod.open:new-project",
+    "cmd-shift-a": "layout.toggle:agents",
+    "cmd-shift-b": "orca-sidebar.toggle-panel",
+    "cmd-alt-]": "orca-sidebar.next-space",
+    "cmd-alt-[": "orca-sidebar.prev-space",
+    "cmd-]": "orca-sidebar.next-agent",
+    "cmd-[": "orca-sidebar.prev-agent",
+    "cmd-w": "my-tabs.close-tab",
+    "cmd-shift-w": "my-tabs.close-pane"
+  }
+}

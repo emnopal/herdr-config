@@ -1,0 +1,23 @@
+const { test } = require("node:test");
+const assert = require("node:assert/strict");
+const vm = require("node:vm");
+const fs = require("node:fs");
+const source = fs.readFileSync("mods/files-open-with/panel.js", "utf8");
+const code = source.slice(source.indexOf("function location("), source.indexOf("const key ="));
+test("viewer focus preserves the tree, terminal cd and space switches still follow", () => {
+  let space = { id: "a", active: true, folder: "/original", tabs: [{ id: "terminal" }, { id: "viewer" }] };
+  let focus = { pane: "file", tab: "viewer", space: "a" };
+  let list = [{ pane: "shell", tab: "terminal", cwd: "/current" }, { pane: "file", tab: "viewer", mod: "files-open-with" }];
+  const env = { spaces: () => [space], focused: () => focus, panes: () => list };
+  vm.createContext(env); vm.runInContext(code, env);
+  const previous = { space: "a", cwd: "/expanded", on: null };
+  assert.equal(env.location(previous).cwd, "/expanded");
+  assert.equal(env.location().cwd, "/current");
+  focus = { pane: "shell", tab: "terminal", space: "a" };
+  assert.equal(env.location(previous).cwd, "/current");
+  space = { id: "b", active: true, machine: "remote", folder: "/remote", tabs: [{ id: "btab" }] };
+  assert.equal(env.location(previous).cwd, "/remote");
+  assert.equal(env.location(previous).on, "remote");
+  focus = { pane: null, terminal: "remote/t1", cwd: "/block", space: "b" };
+  assert.equal(env.location(previous).cwd, "/block");
+});
