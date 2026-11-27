@@ -51,3 +51,25 @@ export async function codexUsage() {
 
 // Next Claude request after a failure: 3, 6, 12, then 15 minutes, or longer if the server asks.
 export const backoff = (failures, retryAfter = 0) => Math.max(Math.min(USAGE_EVERY * 2 ** Math.max(failures - 1, 0), MAX_WAIT), Math.min(retryAfter, 3600) * 1000);
+
+export async function agyUsage() {
+  const r = await exec("agy", ["--output-format", "json", "-p", "/usage"], { timeout: 20_000 }).catch(() => null);
+  const line = r?.stdout.split("\n").find((l) => l.trim().startsWith("{") && l.includes('"command"'));
+  if (!line) return null;
+  const groups = JSON.parse(line).command?.data?.groups;
+  if (!Array.isArray(groups)) return null;
+  const out = [];
+  for (const g of groups) {
+    const prefix = !g?.name || /^gemini\b/i.test(g.name) ? "" : `${g.name.replace(/\s+models$/i, "")} · `;
+    for (const b of g?.buckets ?? []) {
+      if (!b || b.disabled || b.remaining_fraction == null) continue;
+      const rem = Number(b.remaining_fraction);
+      const resetsAt = ms(b.reset_time);
+      if (prefix && rem >= 1 && (!resetsAt || resetsAt <= 0)) continue;
+      const name = b.window === "5h" ? "5-hour" : b.window === "weekly" ? "Weekly" : (b.name || "Limit");
+      out.push({ label: `${prefix}${name}`, used: clamp((1 - rem) * 100), resetsAt: resetsAt > 0 ? resetsAt : null, order: b.window === "5h" ? 0 : 1 });
+    }
+  }
+  out.sort((a, b) => a.order - b.order);
+  return out.length ? out.map(({ order: _, ...w }) => w) : null;
+}

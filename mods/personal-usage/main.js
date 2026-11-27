@@ -1,13 +1,13 @@
 // Claude Code and Codex plan usage at the foot of the sidebar: one bar per limit window.
 // Reads shared "cc.usage" (cc-status fetches it); a click asks for fresh numbers.
 
-import { claudeUsage, codexUsage, USAGE_EVERY, backoff } from "./usage.js";
+import { claudeUsage, codexUsage, agyUsage, USAGE_EVERY, backoff } from "./usage.js";
 
 import { View, div } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
 import { theme, run, checking } from "herdr";
 
-const AGENTS = [{ key: "claude", name: "Claude" }, { key: "codex", name: "Codex" }];
+const AGENTS = [{ key: "claude", name: "Claude" }, { key: "codex", name: "Codex" }, { key: "antigravity", name: "Antigravity" }];
 const ROW = 44, HEAD = 22, PAD = 20, GAP = 8;
 
 // "resets in 25m", "resets at 14:20" (today), "resets on Mon 02:29" (another day).
@@ -48,6 +48,11 @@ export default class Usage extends View {
         this.data.codex = { windows: await codexUsage() };
       } catch (e) {
         this.data.codex = { ...this.data.codex, error: String(e.message ?? e) };
+      }
+      try {
+        if (typeof agyUsage === "function") this.data.antigravity = { windows: await agyUsage() };
+      } catch (e) {
+        this.data.antigravity = { ...this.data.antigravity, error: String(e.message ?? e) };
       } finally {
         this.busy = false;
         cx.notify();

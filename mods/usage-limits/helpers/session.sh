@@ -1,9 +1,10 @@
 #!/bin/sh
 # Prints one line of numbers about the session a process is running, and exits:
-#   claude: tokens=N calls=N compactions=N [lastTrigger=auto lastPre=N lastPost=N]
-#   codex:  tokens=N window=N calls=N
+#   claude:      tokens=N calls=N compactions=N [lastTrigger=auto lastPre=N lastPost=N]
+#   codex:       tokens=N window=N calls=N
+#   antigravity: tokens=N calls=N
 #
-# Usage: session.sh claude|codex <pid of the agent in the terminal>
+# Usage: session.sh claude|codex|antigravity <pid of the agent in the terminal>
 #
 # Session files hold the whole conversation. Only numbers leave this script.
 # Text in them is JSON-escaped, so \"type\" can't match the "type" looked for here.
@@ -95,5 +96,24 @@ codex() {
 case "$app" in
   claude) claude ;;
   codex) codex ;;
+  antigravity)
+    dir=${ANTIGRAVITY_HOME:-$HOME/.gemini/antigravity-cli}
+    id=$(lsof -nP -Fn -p "$pid" 2>/dev/null | sed -n 's|^n.*/conversations/\([0-9a-fA-F-]*\)\.db$|\1|p' | head -1)
+    [ -n "$id" ] || id=$(lsof -nP -Fn -p "$pid" 2>/dev/null | sed -n 's|^n.*/presence/\([0-9a-fA-F-]*\)\.lock$|\1|p' | head -1)
+    case "$id" in '' | *[!0-9a-fA-F-]*) exit 1 ;; esac
+    file="$dir/brain/$id/.system_generated/logs/transcript.jsonl"
+    [ -f "$file" ] || exit 1
+    awk "$NUM"'
+      /"type":"USER_INPUT"/ { calls++ }
+      /"source":"MODEL"/ && /"input_tokens":/ {
+        n = num($0, "input_tokens") + num($0, "cache_read_tokens")
+        if (n > 0) tokens = n
+      }
+      END {
+        if (!tokens) exit 1
+        printf "tokens=%d calls=%d\n", tokens, calls
+      }' "$file"
+    exit $?
+    ;;
   *) exit 1 ;;
 esac
